@@ -7,9 +7,9 @@ Importing Pandas
 ------------------
 import pandas as pd
 
-====================================================
+****************************************************
 Creating, Reading and Writing
-====================================================
+****************************************************
 
 Dataframe
 ----------
@@ -103,13 +103,361 @@ animals = pd.DataFrame({'Cows': [12, 20], 'Goats': [22, 19]}, index=['Year 1', '
 animals.to_csv('cows_and_goats.csv')
 
 
-========================================================
+****************************************************
 Indexing, Selecting and Assigning
-========================================================
+****************************************************
 - Selecting specific values of a pandas DataFrame or Series to work on is an implicit step.
 
 Native accessors
 ---------------------
+reviews = pd.read_csv("winemag-data-130k-v2.csv", index_col=0)
+
+- Native Python objects provide good ways of indexing data.
+- we can access the property of an object by accessing it as an attribute. 
+- "book" object, "title" property, can be accessed by "book.title". Columns in a pandas DataFrame work in much the same way.
+- two ways of selecting a specific Series out of a DataFrame:
+- "reviews.country"
+
+=====================
+Natvie Accessor
+======================
+
+0            Italy
+1         Portugal
+            ...   
+129969      France
+129970      France
+Name: country, Length: 129971, dtype: object
+
+- "reviews['country']
+=====================
+Natvie Accessor 2
+======================
+
+0            Italy
+1         Portugal
+            ...   
+129969      France
+129970      France
+Name: country, Length: 129971, dtype: object
+
+- indexing operator [] have the advantage that can handle column name with reserved characters in them
+  example: "reviews.country providence" will not work
+
+- Pandas Series is like dictionary data structure.
+  example: "reviews['country'][0]
+=====================
+Natvie Accessor 3
+======================
+
+Italy
 
 
+Indexing in Pandas
+----------------------------
+- along with indexing operator pandas has its own accessor operators "loc" and "iloc"
+- For advanceed operation: better to use "loc" and "iloc"
+
+Index based selection (iloc)
+----
+- selecting data based on its numerical position in the data.
+- To select the first row of data in a DataFrame:
+  reviews.iloc[0]
+
+country                                                              Italy
+description              Aromas include tropical fruit, broom, brimston...
+designation                                                   Vulkà Bianco
+points                                                                  87
+price                                                                  NaN
+province                                                 Sicily & Sardinia
+region_1                                                              Etna
+region_2                                                               NaN
+taster_name                                                  Kerin O’Keefe
+taster_twitter_handle                                         @kerinokeefe
+title                                    Nicosia 2013 Vulkà Bianco  (Etna)
+variety                                                        White Blend
+winery                                                             Nicosia
+Name: 0, dtype: object
+
+- Both "loc" and "iloc" are row first, column second. Native python, is column first and row second.
+- This means that it's marginally easier to retrieve rows, and marginally harder to get retrieve columns. To get a column with iloc, we can do the following:
+  reviews.iloc[:, 0]
+
+=================
+iloc example 2: get column with iloc
+==================
+
+0            Italy
+1         Portugal
+2               US
+3               US
+4               US
+            ...   
+129966     Germany
+129967          US
+129968      France
+129969      France
+129970      France
+Name: country, Length: 129971, dtype: object
+
+- ":" operator comes from native Python means "everything"
+- When combined with other selectors, however, it can be used to indicate a range of values. For example, to select the country column from just the first, second, and third row, we would do:
+  reviews.iloc[:3, 0]
+
+=================
+iloc example 3: get column and first, second and third rows with iloc
+==================
+
+0       Italy
+1    Portugal
+2          US
+Name: country, dtype: object
+
+- to select just the second and third entries:
+  reviews.iloc[1:3, 0]
+
+=================
+iloc example 4: get column and second and third rows with iloc
+==================
+
+1    Portugal
+2          US
+Name: country, dtype: object
+
+- it is possible to pass a list:
+  reviews.iloc[[1, 2, 3], 0]
+
+=================
+iloc example 5: get column and second, third and forth rows with iloc
+==================
+
+1    Portugal
+2          US
+3          US
+Name: country, dtype: object
+
+- negative numbers can be used in selection. This will start counting forwards from the end of the values. So for example here are the last five elements of the dataset.
+  reviews.iloc[-5:]
+
+=================
+iloc example 6: get last 5 rows with iloc
+==================
+
+        country                                        description  ...         variety                                    winery
+129966  Germany  Notes of honeysuckle and cantaloupe sweeten th...  ...        Riesling  Dr. H. Thanisch (Erben Müller-Burggraef)
+129967       US  Citation is given as much as a decade of bottl...  ...      Pinot Noir                                  Citation
+129968   France  Well-drained gravel soil gives this wine its c...  ...  Gewürztraminer                           Domaine Gresser
+129969   France  A dry style of Pinot Gris, this is crisp with ...  ...      Pinot Gris                      Domaine Marcel Deiss
+129970   France  Big, rich and off-dry, this is powered by inte...  ...  Gewürztraminer                          Domaine Schoffit
+
+[5 rows x 13 columns]
+
+
+Label Based Selection
+-------------------------------
+- Second paradigm for attribute selection is the one followed by the "loc" operator.: label based selection
+- in this paradigm, it's the data index value, not its position, which matters
+- For example, to get the first entry in "reviews"
+  reviews.loc[0, 'country']
+
+=================
+loc example 1: first row and country column
+==================
+
+Italy
+
+- iloc is conceptually simpler than loc because it ignores the dataset's indices.
+- When we use iloc we treat the dataset like a big matrix (a list of lists), one that we have to index into by position.
+- loc, by contrast, uses the information in the indices to do its work.
+- Since your dataset usually has meaningful indices, it's usually easier to do things using loc instead.
+- Example:
+  reviews.loc[:, ['taster_name', 'taster_twitter_handle', 'points']]
+
+=================
+loc example 2: all rows and taster_name, taster_twitter_handle and points column
+==================
+
+               taster_name taster_twitter_handle  points
+0            Kerin O’Keefe          @kerinokeefe      87
+1               Roger Voss            @vossroger      87
+2             Paul Gregutt           @paulgwine       87
+3       Alexander Peartree                   NaN      87
+4             Paul Gregutt           @paulgwine       87
+...                    ...                   ...     ...
+129966  Anna Lee C. Iijima                   NaN      90
+129967        Paul Gregutt           @paulgwine       90
+129968          Roger Voss            @vossroger      90
+129969          Roger Voss            @vossroger      90
+129970          Roger Voss            @vossroger      90
+
+[129971 rows x 3 columns]
+
+
+Choosing between loc and iloc
+-----------------------------------
+- When choosing or transitioning between loc and iloc
+- two methods use slightly different indexing schemes:
+- "iloc" uses the Python stdlib indexing scheme, where the first element of the range is included and the last one excluded. So, 0:10 means 0, ..., 9
+- "loc" indexes inclusively. So 0:10 will select entries 0,...,10
+- Remember that loc can index any stdlib type: strings, for example. If we have a DataFrame with index values Apples, ..., Potatoes, ..., and we want to select "all the alphabetical fruit choices between Apples and Potatoes", then it's a lot more convenient to index df.loc['Apples':'Potatoes'] than it is to index something like df.loc['Apples', 'Potatoet] (t coming after s in the alphabet).
+- df.iloc[0:1000] will return 1000 entries, while df.loc[0:1000] return 1001 of them! 
+- Otherwise, the semantics of using loc are the same as those for iloc.
+
+Manipulating the index
+------------------------------------
+- Label-based selection derives its power from the labels in the index.
+- Critically, the index we use is not immutable.
+- We can manipulate the index in any way we see fit.
+- "set_index()" method can be used to do the job.
+- reviews.set_index('title')
+======================
+Set Index
+======================
+
+                                                     country  ...                winery
+title                                                         ...                      
+Nicosia 2013 Vulkà Bianco  (Etna)                      Italy  ...               Nicosia
+Quinta dos Avidagos 2011 Avidagos Red (Douro)       Portugal  ...   Quinta dos Avidagos
+...                                                      ...  ...                   ...
+Domaine Marcel Deiss 2012 Pinot Gris (Alsace)         France  ...  Domaine Marcel Deiss
+Domaine Schoffit 2012 Lieu-dit Harth Cuvée Caro...    France  ...      Domaine Schoffit
+
+[129971 rows x 12 columns]
+
+
+Conditional Selection
+------------------------------------------
+- suppose that we're interested specifically in better-than-average wines produced in Italy.
+reviews.country == 'Italy' : This operation produced a Series of True/False booleans based on the country of each record.
+
+====================
+Checking if wine is Italian or not
+======================
+
+0          True
+1         False
+          ...  
+129969    False
+129970    False
+Name: country, Length: 129971, dtype: bool
+
+reviews.loc[reviews.country == 'Italy'] : used inside of loc to select the relevant data
+
+====================
+Locate only Italian wine data from wine reviews
+======================
+
+       country                                        description  ...       variety           winery
+0        Italy  Aromas include tropical fruit, broom, brimston...  ...   White Blend          Nicosia
+6        Italy  Here's a bright, informal red that opens with ...  ...      Frappato  Terre di Giurfo
+...        ...                                                ...  ...           ...              ...
+129961   Italy  Intense aromas of wild cherry, baking spice, t...  ...      Frappato              COS
+129962   Italy  Blackberry, cassis, grilled herb and toasted a...  ...  Nero d'Avola         Cusumano
+
+[19540 rows x 13 columns]
+
+
+- Italian Wines are reviewed on a 80-to-100 point scale, so this could mean wines that accrued at least 90 points.
+reviews.loc[(reviews.country == 'Italy') & (reviews.points >= 90)]
+
+====================
+Locate only Italian wine data from wine reviews
+======================
+
+       country                                        description  ...       variety    winery
+120      Italy  Slightly backward, particularly given the vint...  ...      Nebbiolo   Ceretto
+130      Italy  At the first it was quite muted and subdued, b...  ...      Nebbiolo   Ceretto
+...        ...                                                ...  ...           ...       ...
+129961   Italy  Intense aromas of wild cherry, baking spice, t...  ...      Frappato       COS
+129962   Italy  Blackberry, cassis, grilled herb and toasted a...  ...  Nero d'Avola  Cusumano
+
+[6648 rows x 13 columns]
+
+
+- Italian Wines or wines that accrued at least 90 points.
+reviews.loc[(reviews.country == 'Italy') | (reviews.points >= 90)]
+
+====================
+Locate Italian wine or wine with above avg points
+======================
+
+       country                                        description  ...         variety                winery
+0        Italy  Aromas include tropical fruit, broom, brimston...  ...     White Blend               Nicosia
+6        Italy  Here's a bright, informal red that opens with ...  ...        Frappato       Terre di Giurfo
+...        ...                                                ...  ...             ...                   ...
+129969  France  A dry style of Pinot Gris, this is crisp with ...  ...      Pinot Gris  Domaine Marcel Deiss
+129970  France  Big, rich and off-dry, this is powered by inte...  ...  Gewürztraminer      Domaine Schoffit
+
+[61937 rows x 13 columns]
+
+- Pandas comes with a few built in conditional selectors. Below are two:
+- isin()
+- isnull()
+
+- "isin()": isin is lets you select data whose value "is in" a list of values.
+- For example, here's how we can use it to select wines only from Italy or France
+reviews.loc[reviews.country.isin(['Italy', 'France'])]
+
+====================
+Locate wines only from Italy or France
+======================
+
+       country                                        description  ...         variety                winery
+0        Italy  Aromas include tropical fruit, broom, brimston...  ...     White Blend               Nicosia
+6        Italy  Here's a bright, informal red that opens with ...  ...        Frappato       Terre di Giurfo
+...        ...                                                ...  ...             ...                   ...
+129969  France  A dry style of Pinot Gris, this is crisp with ...  ...      Pinot Gris  Domaine Marcel Deiss
+129970  France  Big, rich and off-dry, this is powered by inte...  ...  Gewürztraminer      Domaine Schoffit
+
+[41633 rows x 13 columns]
+
+- "isnull()":  (and its companion notnull) 
+- These methods let you highlight values which are (or are not) empty (NaN)
+- Example: to filter out wines lacking a price tag in the dataset
+review.loc[reviews.price.notnull()]
+
+====================
+Locate filter out wines lacking a price tag in the dataset
+======================
+
+         country                                        description  ...         variety                winery
+1       Portugal  This is ripe and fruity, a wine that is smooth...  ...  Portuguese Red   Quinta dos Avidagos
+2             US  Tart and snappy, the flavors of lime flesh and...  ...      Pinot Gris             Rainstorm
+...          ...                                                ...  ...             ...                   ...
+129969    France  A dry style of Pinot Gris, this is crisp with ...  ...      Pinot Gris  Domaine Marcel Deiss
+129970    France  Big, rich and off-dry, this is powered by inte...  ...  Gewürztraminer      Domaine Schoffit
+
+[120975 rows x 13 columns]
+
+
+Assigning data
+---------------------------------------
+- assigning data to a DataFrame is easy.
+- assign either a constant value:
+reviews['critic'] = 'everyone'
+reviews['critic']
+====================
+Assigning a constant value
+======================
+
+0         everyone
+1         everyone
+            ...   
+129969    everyone
+129970    everyone
+Name: critic, Length: 129971, dtype: object
+
+- with an iterable of value
+reviews['index_backwards'] = range(len(reviews), 0, -1)
+reviews['index_backwards']
+====================
+Assigning iterable values
+======================
+
+0         129971
+1         129970
+           ...  
+129969         2
+129970         1
+Name: index_backwards, Length: 129971, dtype: int64
 
