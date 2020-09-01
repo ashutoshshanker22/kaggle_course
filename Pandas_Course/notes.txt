@@ -1,0 +1,96 @@
+Introduction
+-------------
+How to create own data?
+How to work with existing data?
+
+Importing Pandas
+------------------
+import pandas as pd
+
+====================================================
+Creating, Reading and Writing
+====================================================
+
+Dataframe
+----------
+- is table.
+- contains an array of individual entries.
+- Each entry corresponds to a row (or record) and a column.
+
+example:
+pd.DataFrame({'Yes': [50, 21], 'No': [131, 2]})
+
+pd.DataFrame({'Bob': ['I liked it.', 'It was awful.'], 'Sue': ['Pretty good.', 'Bland.']})
+
+- dictionary-list constructor assigns values to the column labels, but just uses an ascending count from 0 (0, 1, 2, 3, ...) for the row labels
+- list of row labels used in a DataFrame is known as an Index
+
+pd.DataFrame({'Bob': ['I liked it.', 'It was awful.'], 
+              'Sue': ['Pretty good.', 'Bland.']},
+             index=['Product A', 'Product B'])
+
+Series
+----------
+- is a sequence of data values
+- if dataframe is a table, a series is a list.
+
+pd.Series([1, 2, 3, 4, 5])
+
+- series is a single column of a DataFrame.
+- assign column values to the series using an index parameter.
+
+pd.Series([30, 35, 40], index=['2015 Sales', '2016 Sales', '2017 Sales'], name='Product A')
+
+- *** a DataFrame as actually being just a bunch of Series "glued together".
+
+
+Reading data files
+-------------------
+- Data can be stored most basic of these is the humble CSV file.
+
+- csv example:
+Product A,Product B,Product C,
+30,21,9,
+35,34,1,
+41,11,11
+
+wine_reviews = pd.read_csv("wine-reviews/winemag-data-130k-v2.csv")
+
+- "shape" attribute to check how large the resulting DataFrame
+
+wine_reviews.shape
+
+(129971, 14)
+
+- our new DataFrame has 129,271 records split across 14 different columns.
+
+- "head()" command can grab the first five rows
+
+wine_reviews.head()
+
+Ashutoshs-MacBook-Pro:Pandas_Course ashutoshshanker$ python3 003_reading_data_file.py 
+(129971, 14)
+   Unnamed: 0   country  ...         variety               winery
+0           0     Italy  ...     White Blend              Nicosia
+1           1  Portugal  ...  Portuguese Red  Quinta dos Avidagos
+2           2        US  ...      Pinot Gris            Rainstorm
+3           3        US  ...        Riesling           St. Julian
+4           4        US  ...      Pinot Noir         Sweet Cheeks
+
+- "index_col": 
+wine_reviews = pd.read_csv("winemag-data-130k-v2.csv", index_col=0)
+- CSV file has a built-in index, which pandas did not pick up on automatically. To make pandas use that column for the index (instead of creating a new one from scratch), we can specify an index_col.
+
+python3 003_reading_data_file.py
+=================
+Print first 5 rows of csv in dataframe and use built-in index column
+================
+
+    country                                        description  ...         variety               winery
+0     Italy  Aromas include tropical fruit, broom, brimston...  ...     White Blend              Nicosia
+1  Portugal  This is ripe and fruity, a wine that is smooth...  ...  Portuguese Red  Quinta dos Avidagos
+2        US  Tart and snappy, the flavors of lime flesh and...  ...      Pinot Gris            Rainstorm
+3        US  Pineapple rind, lemon pith and orange blossom ...  ...        Riesling           St. Julian
+4        US  Much like the regular bottling from 2012, this...  ...      Pinot Noir         Sweet Cheeks
+
+
