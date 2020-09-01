@@ -97,4 +97,19 @@ Print first 5 rows of csv in dataframe and use built-in index column
 3        US  Pineapple rind, lemon pith and orange blossom ...  ...        Riesling           St. Julian
 4        US  Much like the regular bottling from 2012, this...  ...      Pinot Noir         Sweet Cheeks
 
+- Save dataframe to csv file
+
+animals = pd.DataFrame({'Cows': [12, 20], 'Goats': [22, 19]}, index=['Year 1', 'Year 2'])
+animals.to_csv('cows_and_goats.csv')
+
+
+========================================================
+Indexing, Selecting and Assigning
+========================================================
+- Selecting specific values of a pandas DataFrame or Series to work on is an implicit step.
+
+Native accessors
+---------------------
+
+
 
