@@ -54,6 +54,10 @@ Product A,Product B,Product C,
 35,34,1,
 41,11,11
 
+- Example winemag-data-130k-v2.csv can be found at:
+
+https://www.kaggle.com/christopheiv/winemagdata130k
+
 wine_reviews = pd.read_csv("wine-reviews/winemag-data-130k-v2.csv")
 
 - "shape" attribute to check how large the resulting DataFrame
